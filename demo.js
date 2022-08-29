@@ -65,7 +65,7 @@ async function updateArticle(id) {
 
 async function getAllArticleWithPriceGreaterThen(value) {
   const articoli = await articles.readByQuery({
-    filter: { price: { _gte: 1.5 } },
+    filter: { price: { _gte: 1 } },
   });
   return articoli.data;
 }
