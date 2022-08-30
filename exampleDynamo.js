@@ -1,7 +1,9 @@
-import { CreateTableCommand } from '@aws-sdk/client-dynamodb';
-import { ddbClient } from './dynamoDbClient';
-const params = {
-  AttributeDefinitons: [
+import { CreateTableCommand, ExecuteStatementCommand, PutItemCommand, DescribeTableCommand } from '@aws-sdk/client-dynamodb';
+import { DeleteCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
+import { ddbClient } from './dynamoDbClient.js';
+export const params = {
+  TableName: 'EPISODES2',
+  AttributeDefinitions: [
     {
       AttributeName: 'Season',
       AttributeType: 'N',
@@ -9,11 +11,7 @@ const params = {
     {
       AttributeName: 'Episode',
       AttributeType: 'N',
-    },
-    {
-      AttributeName: 'Transmitted',
-      AttributeType: 'BOOL',
-    },
+    },      
   ],
   KeySchema: [
     {
@@ -29,19 +27,118 @@ const params = {
     ReadCapacityUnits: 1,
     WriteCapacityUnits: 1,
   },
-  TableName: 'EPISODE',
   StreamSpecification: {
     StreamEnabled: false,
   },
 };
 
-export const run = async () => {
+export const createTable = async () => {
   try {
     const data = await ddbClient.send(new CreateTableCommand(params));
     console.log('Table created', data);
-    return data;
   } catch (err) {
     console.error(err);
   }
 };
-run();
+
+export const addElement = async () => {
+    try {
+        const data = await ddbClient.send(new PutItemCommand(
+            {
+                TableName: 'EPISODES', 
+                Item: {
+                    Season: {N: "001"}, 
+                    Episode: {N: "003"}, 
+                    Transmitted: {BOOL: false}
+                }
+            }
+        ));
+        console.log(data); 
+    } catch (err) {
+        console.error(err);
+    }
+};
+export const readElement = async() => {
+    try {
+        const data = await ddbClient.send(new ExecuteStatementCommand({
+            Statement: "SELECT * FROM EPISODES WHERE Episode = ?", 
+            Parameters: [{
+                N: '003'
+            }],
+        }));
+        console.log(data.Items);
+        return "CIAO!"
+    } catch(err) {
+        console.error(err);
+    }
+}
+
+export const updateElement = async() => {
+    try {
+        const data = await ddbClient.send(new ExecuteStatementCommand({
+            Statement: "UPDATE EPISODES SET Transmitted=? WHERE Season=? AND Episode=?", 
+            Parameters: [{
+                BOOL: true}, 
+                {N: '001'},
+                {N: '001'}
+            ],
+        }));
+        console.log(data.Items);
+        return "CIAO!"
+    } catch(err) {
+        console.error(err);
+    }
+}
+
+export const readAllElement = async() => {
+    try {
+        const data = await ddbClient.send(new ExecuteStatementCommand({
+            Statement: "SELECT * FROM EPISODES"
+        }));
+        data.Items.forEach(function (element, index, array){
+            console.log('Episode number: '+element.Episode.N+ ' of season number: '+element.Season.N+(
+            element.Transmitted.BOOL? ' was transmitted' : ' was not transmitted'));
+        });
+    } catch(err) {
+        console.error(err);
+    }
+}
+
+export const describeTable = async() => {
+    try {
+        const data = await ddbClient.send(new DescribeTableCommand({
+            TableName: 'EPISODES', 
+        }));
+        console.log(data);
+        return console.log("CIAO!");
+    } catch(err) {
+        console.error(err);
+    }
+}
+
+export const deleteItem = async() => {
+    const params = {
+        TableName: 'EPISODES', 
+        Key: {
+            'Season': {N:'1'},
+            'Episode': {N:'3'}
+        },
+    }
+    /* var params = {};
+    params.TableName = "EPISODES";
+    var key = {'Season' : '1', 'Episode' : '3'};
+    params.Key = key; */
+    try {
+        const data = await ddbClient.send(new DeleteCommand(params));
+        console.log(data);
+    } catch(err) {
+        console.error(err);
+    }
+} 
+//deleteItem();
+//createTable(); 
+//addElement();
+//readElement();
+//updateElement(); 
+//readAllElement();
+//describeTable();
