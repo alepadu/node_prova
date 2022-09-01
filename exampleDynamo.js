@@ -1,8 +1,8 @@
-import { CreateTableCommand, ExecuteStatementCommand, PutItemCommand, DescribeTableCommand } from '@aws-sdk/client-dynamodb';
+import { CreateTableCommand, ExecuteStatementCommand, PutItemCommand, DescribeTableCommand, DeleteTableCommand } from '@aws-sdk/client-dynamodb';
 import { DeleteCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { ddbClient } from './dynamoDbClient.js';
 export const params = {
-  TableName: 'EPISODES2',
+  TableName: 'EPISODES',
   AttributeDefinitions: [
     {
       AttributeName: 'Season',
@@ -135,10 +135,24 @@ export const deleteItem = async() => {
         console.error(err);
     }
 } 
+
+export const deleteTable = async() => {
+    const params = {
+        TableName: "EPISODES"
+    };
+
+    try {
+        const data = await ddbClient.send(new DeleteTableCommand(params));
+        console.log("success: ", data);
+    } catch(err) {
+        console.error("error:", err);
+    } 
+};
 //deleteItem();
 //createTable(); 
 //addElement();
 //readElement();
 //updateElement(); 
 //readAllElement();
-//describeTable();
+describeTable();
+//deleteTable(); 
