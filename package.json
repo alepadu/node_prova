@@ -6,9 +6,10 @@
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.162.0",
+    "@aws-sdk/client-eventbridge": "^3.162.0",
+    "@aws-sdk/client-s3": "^3.165.0",
     "@aws-sdk/lib-dynamodb": "^3.162.0",
-    "@directus/sdk": "^10.1.4",
-    "aws-sdk": "^2.1207.0"
+    "@directus/sdk": "^10.1.4"
   },
   "type": "module"
 }

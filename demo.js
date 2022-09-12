@@ -80,7 +80,7 @@ const server = http.createServer(async (req, res) => {
     //let orderRows = await getOrderRows();
     //res.write(JSON.stringify(articles));
     try {
-      const articoli = await getAllArticleWithPriceGreaterThen(2);
+      const articoli = await getOrders();
       res.write(JSON.stringify(articoli));
     } catch (err) {
       console.error(err);

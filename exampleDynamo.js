@@ -1,5 +1,5 @@
 import { CreateTableCommand, ExecuteStatementCommand, PutItemCommand, DescribeTableCommand, DeleteTableCommand } from '@aws-sdk/client-dynamodb';
-import { DeleteCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
+import { DeleteCommand, UpdateCommand} from "@aws-sdk/lib-dynamodb";
 import { ddbClient } from './dynamoDbClient.js';
 export const params = {
   TableName: 'EPISODES',
@@ -116,7 +116,7 @@ export const describeTable = async() => {
     }
 }
 
-export const deleteItem = async() => {
+export const deleteItem = async(season, episode) => {
     const params = {
         TableName: 'EPISODES', 
         Key: {
@@ -154,5 +154,5 @@ export const deleteTable = async() => {
 //readElement();
 //updateElement(); 
 //readAllElement();
-describeTable();
+//describeTable();
 //deleteTable(); 
